@@ -16,16 +16,17 @@
 
     .DESCRIPTION 
     This script removes/disables HealthMailboxes that show an inconsistent error when querying monitoring mailboxes using
-
-    Get-Mailbox -Monitoring
-
+		Get-Mailbox -Monitoring
     and receiving a warning like
     
-    "WARNING: The object DOMAINNAME/Microsoft Exchange System Objects/Monitoring Mailboxes/”Health_Mailbox_GUID” has been corrupted, and it's in an inconsistent state. The following validation errors happened: WARNING: Database is mandatory or UserMailbox.
+    "WARNING: The object DOMAINNAME/Microsoft Exchange System Objects/Monitoring Mailboxes/”Health_Mailbox_GUID” has been corrupted, 
+	and it's in an inconsistent state. The following validation errors happened: WARNING: Database is mandatory or UserMailbox.
  
-    .NOTES 
+    .NOTES 	
     Requirements 
     - Windows Server 2008 R2 SP1, Windows Server 2012 or Windows Server 2012 R2  
+	
+	REMOVE currently does not work as expected
     
     Revision History 
     -------------------------------------------------------------------------------- 
