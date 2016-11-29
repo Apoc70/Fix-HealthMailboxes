@@ -12,31 +12,32 @@
     Please send ideas, comments and suggestions to support@granikos.eu 
 
     .LINK 
-    More information can be found at http://www.granikos.eu/en/scripts
+    More information can be found at http://scripts.granikus.eu
 
     .DESCRIPTION 
     This script removes/disables HealthMailboxes that show an inconsistent error when querying monitoring mailboxes using
 		Get-Mailbox -Monitoring
     and receiving a warning like
     
-    "WARNING: The object DOMAINNAME/Microsoft Exchange System Objects/Monitoring Mailboxes/”Health_Mailbox_GUID” has been corrupted, 
+    "WARNING: The object DOMAINNAME/Microsoft Exchange System Objects/Monitoring Mailboxes/�Health_Mailbox_GUID has been corrupted, 
 	and it's in an inconsistent state. The following validation errors happened: WARNING: Database is mandatory or UserMailbox.
  
     .NOTES 	
     Requirements 
     - Windows Server 2008 R2 SP1, Windows Server 2012 or Windows Server 2012 R2  
 	
-	REMOVE currently does not work as expected
+	  REMOVE currently does not work as expected
     
     Revision History 
     -------------------------------------------------------------------------------- 
     1.0 Initial community release 
+    1.1 Some PowerShell hygiene
 
     .PARAMETER Remove  
-    Remove the HealthBoxes that have an empty database attribute  
+    Remove the HealthMailboxes that have an empty database attribute  
 
     .PARAMETER Disable
-    Disables the HealthBoxes that have an empty database attribute
+    Disables the HealthMailboxes that have an empty database attribute
     
     .EXAMPLE 
     Remove the HealthMailbox(es) having an empty database attribute
@@ -44,13 +45,13 @@
 #>  
 
 Param(
-    [parameter(Mandatory=$true,ValueFromPipeline=$false,HelpMessage='Remove HealthMailboxes in a corrupted state',ParameterSetName="R")]
-    [switch]$Remove = $false,
-    [parameter(Mandatory=$true,ValueFromPipeline=$false,HelpMessage='Disable HealthMailboxes in a corrupted state',ParameterSetName="D")]
-    [switch]$Disable = $false
+    [parameter(Mandatory=$true,HelpMessage='Remove HealthMailboxes in a corrupted state',ParameterSetName="R")]
+    [switch]$Remove,
+    [parameter(Mandatory=$true,HelpMessage='Disable HealthMailboxes in a corrupted state',ParameterSetName="D")]
+    [switch]$Disable
 )
 
-function CheckHealthMailboxes()
+function script:CheckHealthMailboxes()
 {
     $healthMailboxes = Get-Mailbox -Monitoring -WarningAction SilentlyContinue
 
@@ -60,42 +61,33 @@ function CheckHealthMailboxes()
 
     $i=0
     
-    foreach($mailbox in $healthMailboxes)
-    {
-        try
-        {
+    foreach($mailbox in $healthMailboxes) {
+        try {
             Write-Output "Checking:"$mailbox.UserPrincipalName
             
-            If(($mailbox.database -eq "") -or ($mailbox.database -eq $null)) 
-            {
+            If(($mailbox.database -eq '') -or ($mailbox.database -eq $null)) {
                 $upn = $mailbox.UserPrincipalName
 
                 Write-Warning "Database attribute check failed: $upn" 
-                if($i -lt 50)
-                {
-                    try
-                    {
+                if($i -lt 50) {
+                    try {
                         Write-Output "Disabling mailbox $upn"
                         $i++
 						
-                        if($Remove)
-                        {
+                        if($Remove) {
                             Remove-Mailbox $upn -Confirm:$false -Permanent:$true -ErrorAction Stop
                         }
-                        if($Disable)
-                        {
+                        if($Disable) {
                             Disable-Mailbox $upn -Confirm:$false -ErrorAction Stop
                         }
                     }
-                    catch [System.Exception]
-                    {
+                    catch {
                         Write-Error "Error deleting mailbox! Please check, if you have sufficient permission to delete the account!"
                     }
                 }
             }
         }
-        catch [System.Exception]
-        {
+        catch {
             $upn = $mailbox.UserPrincipalName
             Write-Warning "Mailbox with warning: $upn"
         }
