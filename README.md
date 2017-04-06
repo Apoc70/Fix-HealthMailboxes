@@ -1,34 +1,31 @@
 # Fix-HealthMailboxes.ps1
 Fix corrupted Exchange Server Health Mailboxes.
 
-##Description
+## Description
 Removes/Disables HealthMailboxes that are lacking a mailbox database attribute aka corrupt.
 
-##Inputs
-PARAMETER Remove  
+## Parameters
+### Remove  
 Remove the HealthMailboxes that have an empty database attribute  
 
-PARAMETER Disable
+### Disable
 Disables the HealthMailboxes that have an empty database attribute
 
-##Outputs
-None
-
-##Examples
+## Examples
 ```
 .\Fix-HealthMailboxes.ps1 -Remove
 ```
 Remove the HealthMailbox(es) having an empty database attribute
 
-##TechNet Gallery
+## TechNet Gallery
 Find the script at TechNet Gallery
 * https://gallery.technet.microsoft.com/Find-and-remove-corrupt-42c8bfc2
 
 
-##Credits
+## Credits
 Written by: Thomas Stensitzki
 
-Stay connected:
+## Social
 
 * My Blog: http://justcantgetenough.granikos.eu
 * Twitter:	https://twitter.com/stensitzki
